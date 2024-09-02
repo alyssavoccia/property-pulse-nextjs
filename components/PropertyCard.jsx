@@ -47,7 +47,7 @@ const PropertyCard = ({ property }) => {
             <FaMapMarkerAlt className="text-orange-700 mt-1" />
             <span className="text-orange-700"> { property.location.city }, { property.location.state } </span>
           </div>
-          <Link href={ `/properties/${property._id}` } className="h-[36px] bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm">Details</Link>
+          <Link href={ `/properties/${property._id}` } className="h-[36px] bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm transition-all duration-150">Details</Link>
         </div>
       </div>
     </div>

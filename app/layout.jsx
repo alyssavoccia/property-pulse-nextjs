@@ -13,7 +13,7 @@ const MainLayout = ({ children }) => {
     <html>
       <body className='flex flex-col h-screen'>
         <Navbar />
-        <main>
+        <main className='flex-1'>
           {children}
         </main>
         <Footer />

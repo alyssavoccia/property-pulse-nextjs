@@ -20,7 +20,7 @@ const Navbar = () => {
         <div className="relative flex h-20 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center md:hidden">
             {/* <!-- Mobile menu button--> */}
-            <button onClick={() => setIsMobileMenuOpen(prev => !prev)} type="button" id="mobile-dropdown-button" className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+            <button onClick={() => setIsMobileMenuOpen(prev => !prev)} type="button" id="mobile-dropdown-button" className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-all-duration-150" aria-controls="mobile-menu" aria-expanded="false">
               <span className="absolute -inset-0.5"></span>
               <span className="sr-only">Open main menu</span>
               <svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
@@ -37,10 +37,10 @@ const Navbar = () => {
             {/* <!-- Desktop Menu Hidden below md screens --> */}
             <div className="hidden md:ml-6 md:block">
               <div className="flex space-x-2">
-                <Link href="/" className={`${pathname === '/' ? 'bg-black' : ''} text-white hover:bg-gray-900 hover:text-white rounded-md px-4 py-2`}>Home</Link>
-                <Link href="/properties" className={`${pathname === '/properties' ? 'bg-black' : ''} text-white hover:bg-gray-900 hover:text-white rounded-md px-4 py-2`}>Properties</Link>
+                <Link href="/" className={`${pathname === '/' ? 'bg-black' : ''} text-white hover:bg-gray-900 hover:text-white rounded-md px-4 py-2  transition-all-duration-150`}>Home</Link>
+                <Link href="/properties" className={`${pathname === '/properties' ? 'bg-black' : ''} text-white hover:bg-gray-900 hover:text-white rounded-md px-4 py-2  transition-all-duration-150`}>Properties</Link>
                 {isLoggedIn && (
-                  <Link href="/properties/add" className={`${pathname === '/properties/add' ? 'bg-black' : ''} text-white hover:bg-gray-900 hover:text-white rounded-md px-4 py-2`}>Add Property</Link>
+                  <Link href="/properties/add" className={`${pathname === '/properties/add' ? 'bg-black' : ''} text-white hover:bg-gray-900 hover:text-white rounded-md px-4 py-2  transition-all-duration-150`}>Add Property</Link>
                 )}
               </div>
             </div>
@@ -49,7 +49,7 @@ const Navbar = () => {
           {!isLoggedIn && (
             <div className="md:block md:ml-6">
               <div className="flex items-center">
-                <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2">
+                <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2  transition-all-duration-150">
                   <FaGoogle className='text-white mr-2' />
                   <span>Login or Register</span>
                 </button>
@@ -60,7 +60,7 @@ const Navbar = () => {
           {isLoggedIn && (
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 md:static md:inset-auto md:ml-6 md:pr-0">
               <Link href="/messages" className="relative group">
-                <button type="button" className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                <button type="button" className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800  transition-all-duration-150">
                   <span className="absolute -inset-1.5"></span>
                   <span className="sr-only">View notifications</span>
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
@@ -98,7 +98,7 @@ const Navbar = () => {
             <Link href="/properties/add" className={`${pathname === '/properties/add' ? 'bg-black' : ''} text-white block rounded-md px-4 py-2 text-base font-medium`}>Add Property</Link>
           )}
           {!isLoggedIn && (
-            <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-5">
+            <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-5  transition-all-duration-150">
               <i className="fa-brands fa-google mr-2"></i>
               <span>Login or Register</span>
             </button>
