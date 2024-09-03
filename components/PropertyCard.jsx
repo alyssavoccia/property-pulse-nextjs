@@ -42,7 +42,7 @@ const PropertyCard = ({ property }) => {
           <p><FaMoneyBill className="md:hidden lg:inline" /> Monthly</p>
         </div>
         <div className="border border-gray-100 mb-5"></div>
-        <div className="flex flex-col lg:flex-row justify-between">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between">
           <div className="flex align-middle gap-2 mb-4 lg:mb-0">
             <FaMapMarkerAlt className="text-orange-700 mt-1" />
             <span className="text-orange-700"> { property.location.city }, { property.location.state } </span>
