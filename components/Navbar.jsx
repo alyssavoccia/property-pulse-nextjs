@@ -1,18 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
 import logo from '@/assets/images/logo-white.png';
 import profileDefault from '@/assets/images/profile.png';
 import { FaGoogle } from 'react-icons/fa';
 
 const Navbar = () => {
+  const { data: session } = useSession();
+  const profileImage = session?.user?.image;
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [providers, setProviders] = useState(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const setAuthProviders = async () => {
+      const res = await getProviders();
+      setProviders(res);
+    };
+
+    setAuthProviders();
+  }, []);
 
   return (
     <nav className="bg-blue-700 border-b border-blue-500">
@@ -39,25 +52,27 @@ const Navbar = () => {
               <div className="flex space-x-2">
                 <Link href="/" className={`${pathname === '/' ? 'bg-black' : ''} text-white hover:bg-gray-900 hover:text-white rounded-md px-4 py-2  transition-all-duration-150`}>Home</Link>
                 <Link href="/properties" className={`${pathname === '/properties' ? 'bg-black' : ''} text-white hover:bg-gray-900 hover:text-white rounded-md px-4 py-2  transition-all-duration-150`}>Properties</Link>
-                {isLoggedIn && (
+                {session && (
                   <Link href="/properties/add" className={`${pathname === '/properties/add' ? 'bg-black' : ''} text-white hover:bg-gray-900 hover:text-white rounded-md px-4 py-2  transition-all-duration-150`}>Add Property</Link>
                 )}
               </div>
             </div>
           </div>
           {/* <!-- Right Side Menu (Logged Out) --> */}
-          {!isLoggedIn && (
+          {!session && (
             <div className="md:block md:ml-6">
               <div className="flex items-center">
-                <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2  transition-all-duration-150">
-                  <FaGoogle className='text-white mr-2' />
-                  <span>Login or Register</span>
-                </button>
+                {providers && Object.values(providers).map((provider, index) => (
+                  <button onClick={() => signIn(provider.id)} key={index} className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2  transition-all-duration-150">
+                    <FaGoogle className='text-white mr-2' />
+                    <span>Login or Register</span>
+                  </button>
+                ))}
               </div>
             </div>
           )}
           {/* <!-- Right Side Menu (Logged In) --> */}
-          {isLoggedIn && (
+          {session && (
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 md:static md:inset-auto md:ml-6 md:pr-0">
               <Link href="/messages" className="relative group">
                 <button type="button" className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800  transition-all-duration-150">
@@ -75,14 +90,25 @@ const Navbar = () => {
                   <button onClick={() => setIsProfileMenuOpen(prev => !prev)} type="button" className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                     <span className="absolute -inset-1.5"></span>
                     <span className="sr-only">Open user menu</span>
-                    <Image className="h-8 w-8 rounded-full" src={ profileDefault }  alt="Default profile photo"/>
+                    <Image className="h-8 w-8 rounded-full" src={ profileImage || profileDefault } width={40} height={40}  alt="Default profile photo"/>
                   </button>
                 </div>
                 {/* <!-- Profile dropdown --> */}
                 <div id="user-menu" className={`${isProfileMenuOpen ? 'block' : 'hidden'} absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`} role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabIndex="-1">
                   <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-0">Your Profile</Link>
                   <Link href="/properties/saved" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-2">Saved Properties</Link>
-                  <button className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-2">Sign Out</button>
+                  <button 
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      signOut();
+                    }}
+                    className="block px-4 py-2 text-sm text-gray-700"
+                    role="menuitem"
+                    tabIndex="-1"
+                    id="user-menu-item-2"
+                  >
+                    Sign Out
+                  </button>
                 </div>
               </div>
             </div>
@@ -94,10 +120,10 @@ const Navbar = () => {
         <div className="space-y-1 px-2 pb-3 pt-2">
           <Link href="/" className={`${pathname === '/' ? 'bg-black' : ''} text-white block rounded-md px-4 py-2 text-base font-medium`}>Home</Link>
           <Link href="/properties" className={`${pathname === '/properties' ? 'bg-black' : ''} text-white block rounded-md px-4 py-2 text-base font-medium`}>Properties</Link>
-          {isLoggedIn && (
+          {session && (
             <Link href="/properties/add" className={`${pathname === '/properties/add' ? 'bg-black' : ''} text-white block rounded-md px-4 py-2 text-base font-medium`}>Add Property</Link>
           )}
-          {!isLoggedIn && (
+          {!session && (
             <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-5  transition-all-duration-150">
               <i className="fa-brands fa-google mr-2"></i>
               <span>Login or Register</span>
