@@ -1,3 +1,4 @@
+import AuthProvider from '@/components/AuthProvider';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import '@/assets/styles/globals.css';
@@ -10,15 +11,17 @@ export const metadata = {
 
 const MainLayout = ({ children }) => {
   return (
-    <html>
-      <body className='flex flex-col h-screen'>
-        <Navbar />
-        <main className='flex-1'>
-          {children}
-        </main>
-        <Footer />
-      </body>
-    </html>
+    <AuthProvider>
+      <html>
+        <body className='flex flex-col h-screen'>
+          <Navbar />
+          <main className='flex-1'>
+            {children}
+          </main>
+          <Footer />
+        </body>
+      </html>
+    </AuthProvider>
   )
 }
 
