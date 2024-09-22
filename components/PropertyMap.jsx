@@ -1,72 +1,75 @@
-"use client";
-import React, { useRef, useEffect} from "react";
-import opencage from "opencage-api-client";
-import "leaflet/dist/leaflet.css";
-import shadow from "leaflet/dist/images/marker-shadow.png";
-import pin from "leaflet/dist/images/marker-icon.png";
-import L from "leaflet";
-import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
+// opencage ccdd6b244d094a429ef46847e815f8c2
+// maptiler VIMwqiLjE3iRfbZFlmz2
 
-const PropertyMap = ({ property }) => {
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import opencage from "opencage-api-client";
+import * as maptilersdk from '@maptiler/sdk';
+import "@maptiler/sdk/dist/maptiler-sdk.css";
+ 
+export default function PropertyMap({ property }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
-
+  const [lat, setLat] = useState(null);
+  const [lng, setLng] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [geoCodeError, setGeoCodeError] = useState(false);
+ 
   useEffect(() => {
-    const getCoords = () => {
+    async function fetchCoordinates() {
       opencage
         .geocode({
-          q: `${property.location.street}, ${property.location.city}, ${property.location.state}`,
-          key: "ccdd6b244d094a429ef46847e815f8c2",
+          q: `${property.location.street} ${property.location.city} ${property.location.state} ${property.location.zipcode}`,
+          key: 'ccdd6b244d094a429ef46847e815f8c2'
         })
         .then((data) => {
-          if (data.results.length > 0) {
+          // console.log(JSON.stringify(data));
+          if (data.status.code === 200 && data.results.length > 0) {
             const place = data.results[0];
-            console.log(place)
+            setLat(place.geometry.lat);
+            setLng(place.geometry.lng);
+            setLoading(false);
           } else {
-            console.log("status", data.status.message);
-            console.log("total_results", data.total_results);
+            setLoading(false);
+            setGeoCodeError(true);
           }
-  
-          if (map.current) return;
-  
-          map.current = new L.Map(mapContainer.current, {
-            center: L.latLng(
-              data.results[0].geometry.lat,
-              data.results[0].geometry.lng
-            ),
-            zoom: 12,
-          });
-  
-          const mtLayer = new MaptilerLayer({
-            apiKey: "VIMwqiLjE3iRfbZFlmz2",
-          }).addTo(map.current);
+        })
+        .catch((error) => {
+          console.log('Error', error.message);
+          setLoading(false);
+          setGeoCodeError(true);
 
-          const icon = new L.Icon({
-            iconUrl: pin.src,
-            shadowUrl: shadow.src,
-            iconSize: [35, 50],
-            shadowSize: [80, 54],
-            shadowAnchor: [25, 40],
-          });
-
-          L.marker(
-            [data.results[0].geometry.lat, data.results[0].geometry.lng],
-            {
-              icon,
-            }
-          ).addTo(map.current);
+          if (error.status?.code === 402) {
+            console.log('hit free trial daily limit');
+            console.log('become a customer: https://opencagedata.com/pricing');
+          }
         });
     }
-
-    getCoords();
-      
-    }, []);
-
+ 
+    fetchCoordinates();
+  }, [])
+ 
+  useEffect(() => {
+    if (map.current) return;
+    if (!loading && lat !== null && lng !== null) {
+      maptilersdk.config.apiKey = 'VIMwqiLjE3iRfbZFlmz2';
+      map.current = new maptilersdk.Map({
+        container: mapContainer.current,
+        style: maptilersdk.MapStyle.STREETS,
+        center: [lng, lat],
+        zoom: 14
+      });
+ 
+      new maptilersdk.Marker({ color: "#FF0000" })
+        .setLngLat([lng, lat])
+        .addTo(map.current);
+    }
+  }, [lng, lat, loading]);
+ 
+  if (geoCodeError) return <div className="text-xl">No location data found</div>
+ 
   return (
-    <div className="relative w-full h-[400px]">
-      <div ref={mapContainer} className="absolute w-full h-[400px]" />
-    </div>
+    <div ref={mapContainer} style={{ height: '500px', width: '100%' }} className="map" />
   )
-};
-
-export default PropertyMap;
+}

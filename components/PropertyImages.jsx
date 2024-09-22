@@ -13,6 +13,7 @@ const PropertyImages = ({ images }) => {
             height={400}
             sizes="100vw"
             priority={true}
+            style={{ width: '100%', height: 'auto' }}
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -26,6 +27,7 @@ const PropertyImages = ({ images }) => {
                   height={400}
                   sizes="100vw"
                   priority={true}
+                  style={{ width: '100%', height: 'auto' }}
                 />
               </div>
             ))}
